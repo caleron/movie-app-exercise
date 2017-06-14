@@ -7,9 +7,10 @@ class CommentService {
      * @param {Object} [movie] The reference to the movie object
      */
     streamComments(movie) {
-        //TODO
+        //works
         let query = db.MovieComment.find()
             .where({'id': {'$exists': true}})
+            .equal('movie', movie)
             .sort({'id': -1});
 
         return query.resultStream()
@@ -26,10 +27,15 @@ class CommentService {
         let query = db.MovieComment.find()
             .where({'id': {'$exists': true}})
             .sort({'id': -1})
-            .limit(new Number(args.limit));
+            .limit(Number(args.limit));
 
         switch (args.type) {
-            //TODO
+            case 'prefix':
+                //TODO implement pls
+                break;
+            case 'keyword':
+                //TODO implement pls
+                break;
         }
 
         return query.resultList({depth: 1}); // with depth: 1, the referenced movies will be loaded
@@ -43,8 +49,13 @@ class CommentService {
      * @param {string} [comment.text] The comment text
      */
     addComment(movie, comment) {
-        //TODO
-        alert("Comment adding not implemented, yet!");
+        //works
+        new db.MovieComment({
+                                movie: movie,
+                                username: comment.username,
+                                user: comment.username,
+                                text: comment.text
+                            }).insert();
     }
 
     /**
@@ -53,8 +64,9 @@ class CommentService {
      * @param {String} [newText] The new text
      */
     editComment(comment, newText) {
-        //TODO
-        alert("Comment editing not implemented, yet!");
+        //works
+        comment.text = newText;
+        comment.update();
     }
 
 }

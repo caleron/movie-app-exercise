@@ -1,4 +1,4 @@
-import { db } from 'baqend/realtime'
+import {db} from "baqend/realtime";
 
 class CommentService {
 
@@ -9,8 +9,8 @@ class CommentService {
     streamComments(movie) {
         //TODO
         let query = db.MovieComment.find()
-            .where({ 'id': { '$exists' : true } })
-			.sort({ 'id': -1 });
+            .where({'id': {'$exists': true}})
+            .sort({'id': -1});
 
         return query.resultStream()
     }
@@ -24,9 +24,9 @@ class CommentService {
      */
     queryComments(args) {
         let query = db.MovieComment.find()
-		.where({ 'id': { '$exists' : true } })
-		.sort({ 'id': -1 })
-		.limit(new Number(args.limit));
+            .where({'id': {'$exists': true}})
+            .sort({'id': -1})
+            .limit(new Number(args.limit));
 
         switch (args.type) {
             //TODO

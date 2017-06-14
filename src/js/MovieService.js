@@ -1,4 +1,4 @@
-import { db } from 'baqend/realtime'
+import {db} from "baqend/realtime";
 
 class MovieService {
 
@@ -9,8 +9,8 @@ class MovieService {
     loadMovieSuggestions(title) {
         //TODO
         let query = db.Movie.find()
-            .where({ 'id': { '$exists' : true } })
-			.sort({ 'id': -1 })
+            .where({'id': {'$exists': true}})
+            .sort({'id': -1})
             .limit(10);
 
         return query.resultList((results) => results.map((result) => result.title));
@@ -23,8 +23,8 @@ class MovieService {
     loadMovieByTitle(title) {
         //TODO
         let query = db.Movie.find()
-            .where({ 'id': { '$exists' : true } })
-			.sort({ 'id': -1 });
+            .where({'id': {'$exists': true}})
+            .sort({'id': -1});
 
         return query.singleResult();
     }
@@ -38,9 +38,9 @@ class MovieService {
      */
     queryMovies(args) {
         let query = db.Movie.find()
-		.where({ 'id': { '$exists' : true } })
-		.sort({ 'id': -1 })
-		.limit(new Number(args.limit));
+            .where({'id': {'$exists': true}})
+            .sort({'id': -1})
+            .limit(new Number(args.limit));
 
         switch (args.type) {
             //TODO

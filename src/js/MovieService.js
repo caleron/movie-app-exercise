@@ -7,9 +7,11 @@ class MovieService {
      * @param {string} [title] The movie title
      */
     loadMovieSuggestions(title) {
-        //TODO
+        //TODO this method is unused, why tf should we implement this?
+        console.log("whaabbababaka " + title);
         let query = db.Movie.find()
             .where({'id': {'$exists': true}})
+            .matches('title', new RegExp("^" + title, "i")) //first try, but cant test
             .sort({'id': -1})
             .limit(10);
 
@@ -21,9 +23,10 @@ class MovieService {
      * @param {string} [title] The movie title
      */
     loadMovieByTitle(title) {
-        //TODO
+        //works
         let query = db.Movie.find()
             .where({'id': {'$exists': true}})
+            .matches('title', "^" + title) //baqend does not support case-insensitive selection
             .sort({'id': -1});
 
         return query.singleResult();
@@ -40,10 +43,24 @@ class MovieService {
         let query = db.Movie.find()
             .where({'id': {'$exists': true}})
             .sort({'id': -1})
-            .limit(new Number(args.limit));
+            .limit(Number(args.limit));
 
         switch (args.type) {
-            //TODO
+            case 'prefix':
+                query.matches('title', new RegExp("^" + args.parameter));
+                break;
+            case 'rating-greater':
+
+                break;
+            case 'genre':
+
+                break;
+            case 'genrePartialmatch':
+                break;
+            case 'release':
+                break;
+            case 'comments':
+                break;
         }
 
         return query.resultList();

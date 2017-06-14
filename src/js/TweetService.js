@@ -7,9 +7,12 @@ class TweetService {
      * @param {Object} [movie] The reference to the movie object
      */
     streamMovieTweets(movie) {
-        //TODO
+        //idk where this is needed, maybe in movie detail view, where it does not work
         let query = db.Tweet.find()
-            .where({'id': {'$exists': true}})
+            .where({
+                       'id': {'$exists': true}
+                   })
+            .matches('text', new RegExp("^.*" + movie.title.replace(" ", ".*")))
             .sort({'id': -1})
             .limit(10);
         return query.resultStream()
@@ -23,13 +26,26 @@ class TweetService {
      * @param {string} [args.limit=10] Max results
      */
     queryTweets(args) {
+        //this works smooth
         let query = db.Tweet.find()
             .where({'id': {'$exists': true}})
             .sort({'id': -1})
-            .limit(new Number(args.limit));
+            .limit(Number(args.limit));
 
+        console.log(args);
         switch (args.type) {
-            //TODO
+            case 'prefix':
+                query = query.matches('text', new RegExp("^" + args.parameter));
+                break;
+            case 'keyword':
+                query = query.matches('text', new RegExp("^.*" + args.parameter));
+                break;
+            case 'followersOrFriends':
+                let nr = Number(args.parameter);
+                query = query.where({
+                                        $or: [{"user.followers_count": {$gt: nr}}, {"user.friends_count": {$gt: nr}}]
+                                    });
+                break
         }
 
         return query.resultStream()

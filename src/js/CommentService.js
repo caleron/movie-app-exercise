@@ -31,10 +31,16 @@ class CommentService {
 
         switch (args.type) {
             case 'prefix':
-                //TODO implement pls
+                query.matches('username', new RegExp("^" + args.parameter));
                 break;
             case 'keyword':
-                //TODO implement pls
+                var querybuilder = db.MovieComment.find();
+                var cond1 = querybuilder.matches('username', new RegExp("^.*" + args.parameter));
+                var cond2 = querybuilder.matches('text', new RegExp("^.*" + args.parameter));
+
+                return querybuilder.or(cond1,cond2)
+                            .ascending('username')
+                            .resultList({depth: 1});
                 break;
         }
 

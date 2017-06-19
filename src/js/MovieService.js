@@ -8,6 +8,7 @@ class MovieService {
      */
     loadMovieSuggestions(title) {
         //TODO this method is unused, why tf should we implement this?
+        //Simon could not find it out either
         console.log("whaabbababaka " + title);
         let query = db.Movie.find()
             .where({'id': {'$exists': true}})
@@ -50,16 +51,22 @@ class MovieService {
                 query.matches('title', new RegExp("^" + args.parameter));
                 break;
             case 'rating-greater':
-
+                query.greaterThan('rating', parseFloat(args.parameter));
                 break;
             case 'genre':
-
+                query.containsAll('genre', args.parameter.split(','));
                 break;
             case 'genrePartialmatch':
+                query.matches('genre', new RegExp("^" + args.parameter));
                 break;
             case 'release':
+                //TODO
+                var datum = new Date(50,1,1,0,0,0,0);
+                //query.lessThanOrEqualTo('releases.date', datum);
+                query.containsAll('releases.country', args.parameter);
                 break;
             case 'comments':
+                //TODO
                 break;
         }
 

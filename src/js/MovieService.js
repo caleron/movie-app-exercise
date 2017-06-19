@@ -46,6 +46,9 @@ class MovieService {
             .sort({'id': -1})
             .limit(Number(args.limit));
 
+        //debug
+        //db.Movie.find().singleResult((movie) => {console.log(movie.releases);});
+
         switch (args.type) {
             case 'prefix':
                 query.matches('title', new RegExp("^" + args.parameter));
@@ -62,14 +65,30 @@ class MovieService {
             case 'release':
                 //TODO
                 var datum = new Date(50,1,1,0,0,0,0);
-                //query.lessThanOrEqualTo('releases.date', datum);
+                //Die folgende Zeile hat nicht den gewünschten Effekt. Der Datumsvergleich geht richtig schön schief                
+                query.lessThanOrEqualTo('releases.date', datum);
                 query.containsAll('releases.country', args.parameter);
                 break;
             case 'comments':
                 //TODO
+                var movielist = [];
+                db.MovieComment.find()
+                            .where({'id': {'$exists': true}})
+                            .sort({'id': -1})
+                            .matches('username', new RegExp("^" + args.parameter))
+                            .resultList((result) => {
+                              result.forEach((comment) => {
+                                if(comment.movie != null)
+                                {movielist.push(comment.movie);}
+                              });
+                              //this line appearantly does not work.
+                              query.in('id', movielist);
+                              //the movie list is actually what has to be displayed.
+                              //but this app wants a Promise instead of a list.
+                              //query.resultList() returns such a Promise.
+                            });
                 break;
         }
-
         return query.resultList();
     }
 

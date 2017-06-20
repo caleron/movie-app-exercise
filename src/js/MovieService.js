@@ -64,7 +64,7 @@ class MovieService {
                 break;
             case 'release':
                 //TODO
-                var datum = new Date(50,1,1,0,0,0,0);
+                let datum = new Date(50,1,1,0,0,0,0);
                 query = query.where({
                                       "releases": {
                                           "$elemMatch": {
@@ -74,27 +74,32 @@ class MovieService {
                                           }
                                     }});
                 break;
-            case 'comments':
-                //TODO
-                var movielist = [];
-                db.MovieComment.find()
-                            .where({'id': {'$exists': true}})
-                            .sort({'id': -1})
-                            .matches('username', new RegExp("^" + args.parameter))
-                            .resultList((result) => {
-                              result.forEach((comment) => {
-                                if(comment.movie != null)
-                                {movielist.push(comment.movie);}
-                              });
-                              //this line appearantly does not work.
-                              query.in('id', movielist);
-                              //the movie list is actually what has to be displayed.
-                              //but this app wants a Promise instead of a list.
-                              //query.resultList() returns such a Promise.
-                            });
+          case 'comments':
+                //works
+                let movielist = [];
+                return db.MovieComment.find()
+                    .where({'id': {'$exists': true}})
+                    .sort({'id': -1})
+                    .matches('username', new RegExp("^" + args.parameter))
+                    .resultList((result) => {
+                        result.forEach((comment) => {
+                            if (comment.movie != null) {
+                                movielist.push(comment.movie);
+                            }
+                        });
+                        //this line appearantly does not work.
+                        query.in('id', movielist);
+                        //the movie list is actually what has to be displayed.
+                        //but this app wants a Promise instead of a list.
+                        //query.resultList() returns such a Promise.
+                    }).then(p1 => {
+                        return query.resultList()
+                    });
                 break;
         }
-        return query.resultList();
+        if (args.type !== 'comments') {
+            return query.resultList();
+        }
     }
 
 }

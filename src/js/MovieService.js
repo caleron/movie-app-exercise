@@ -65,9 +65,14 @@ class MovieService {
             case 'release':
                 //TODO
                 var datum = new Date(50,1,1,0,0,0,0);
-                //Die folgende Zeile hat nicht den gewünschten Effekt. Der Datumsvergleich geht richtig schön schief                
-                query.lessThanOrEqualTo('releases.date', datum);
-                query.containsAll('releases.country', args.parameter);
+                query = query.where({
+                                      "releases": {
+                                          "$elemMatch": {
+                                            "country": args.parameter,
+                                            //this line breaks it. you can comment it out so that only country is matched
+                                            "date": {"$lt": { "$date": datum.toISOString()}}
+                                          }
+                                    }});
                 break;
             case 'comments':
                 //TODO
